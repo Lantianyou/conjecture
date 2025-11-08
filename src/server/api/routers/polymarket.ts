@@ -136,22 +136,15 @@ export const polymarketRouter = createTRPCRouter({
 		.input(
 			z.object({
 				limit: z.number().min(1).max(50).default(50),
-				status: z.enum(["closed", "open", "all"]).default("all"),
 			}),
 		)
 		.query(async ({ input }) => {
-			// Fetch top 50 markets sorted by volume (descending)
+			// Fetch top 50 markets sorted by volume (descending) that are not closed
 			const params = new URLSearchParams({
 				limit: input.limit.toString(),
 				order: "-volumeNum",
+				closed: "false",
 			});
-
-			// Add closed filter if not 'all'
-			if (input.status === "closed") {
-				params.append("closed", "true");
-			} else if (input.status === "open") {
-				params.append("closed", "false");
-			}
 
 			const url = `${POLYMARKET_API_URL}?${params.toString()}`;
 
@@ -165,16 +158,7 @@ export const polymarketRouter = createTRPCRouter({
 				throw new Error(`Failed to fetch top markets: ${response.statusText}`);
 			}
 
-			let data = (await response.json()) as PolymarketMarket[];
-
-			// Client-side filtering as fallback if API parameter doesn't work
-			if (input.status === "closed") {
-				// Filter for markets that ARE closed
-				data = data.filter((market) => market.closed);
-			} else if (input.status === "open") {
-				// Filter for markets that are NOT closed
-				data = data.filter((market) => !market.closed);
-			}
+			const data = (await response.json()) as PolymarketMarket[];
 
 			return data;
 		}),

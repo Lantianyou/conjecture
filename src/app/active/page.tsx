@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 export default async function ActiveMarketsPage() {
 	// Fetch active markets
-	const markets = await api.polymarket.getTopMarkets({ limit: 50, status: "active" });
+	const markets = await api.polymarket.getTopMarkets({ limit: 50 });
 
 	return (
 		<HydrateClient>
