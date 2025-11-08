@@ -19,32 +19,26 @@ export default async function ResolvedMarketsPage() {
 
   return (
     <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+      <main className="flex min-h-screen flex-col items-center justify-center">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
           <div className="flex items-center gap-4">
             <Link href="/">
-              <Button
-                className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
-                size="sm"
-                variant="outline"
-              >
+              <Button size="sm" variant="outline">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back
               </Button>
             </Link>
             <h1 className="font-extrabold text-5xl tracking-tight sm:text-[5rem]">
-              Resolved <span className="text-[hsl(280,100%,70%)]">Markets</span>
+              Resolved Markets
             </h1>
           </div>
-          <p className="text-white/80 text-xl">
-            Markets that have concluded trading
-          </p>
+          <p className="text-xl">Markets that have concluded trading</p>
 
           <div className="w-full max-w-6xl">
             {markets.length === 0 ? (
-              <Card className="border-white/20 bg-white/10 text-white">
+              <Card>
                 <CardContent className="flex items-center justify-center py-12">
-                  <p className="text-white/70">No resolved markets found</p>
+                  <p>No resolved markets found</p>
                 </CardContent>
               </Card>
             ) : (
@@ -61,14 +55,14 @@ export default async function ResolvedMarketsPage() {
                       href={`/markets/${market.id}`}
                       key={market.id ?? index}
                     >
-                      <Card className="cursor-pointer border-white/20 bg-white/10 text-white transition-all duration-300 hover:bg-white/20 hover:shadow-2xl hover:shadow-purple-500/20">
+                      <Card className="cursor-pointer transition-all duration-300 hover:shadow-lg">
                         <CardHeader>
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1">
                               <CardTitle className="line-clamp-2 text-lg">
                                 {market.question}
                               </CardTitle>
-                              <CardDescription className="mt-1 text-white/70">
+                              <CardDescription className="mt-1">
                                 {market.category}
                               </CardDescription>
                             </div>
@@ -77,7 +71,7 @@ export default async function ResolvedMarketsPage() {
                         </CardHeader>
                         <CardContent className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-white/70">
+                            <span className="text-muted-foreground text-sm">
                               Volume
                             </span>
                             <span className="font-semibold">
@@ -86,26 +80,26 @@ export default async function ResolvedMarketsPage() {
                           </div>
 
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-white/70">
+                            <span className="text-muted-foreground text-sm">
                               Final Yes Price
                             </span>
-                            <span className="font-semibold text-green-400">
+                            <span className="font-semibold text-emerald-600">
                               ${Number.parseFloat(yesPrice).toFixed(2)}
                             </span>
                           </div>
 
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-white/70">
+                            <span className="text-muted-foreground text-sm">
                               Final No Price
                             </span>
-                            <span className="font-semibold text-red-400">
+                            <span className="font-semibold text-rose-600">
                               ${Number.parseFloat(noPrice).toFixed(2)}
                             </span>
                           </div>
 
                           {market.endDate && (
                             <div className="flex items-center justify-between">
-                              <span className="text-sm text-white/70">
+                              <span className="text-muted-foreground text-sm">
                                 Ended
                               </span>
                               <span className="text-sm">
