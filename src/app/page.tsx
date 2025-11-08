@@ -1,7 +1,4 @@
-import { headers } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { LatestPost } from "@/app/_components/post";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,17 +8,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { auth } from "@/server/better-auth";
-import { getSession } from "@/server/better-auth/server";
 import { api, HydrateClient } from "@/trpc/server";
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
-  const session = await getSession();
-
-  // Prefetch the top 50 active Polymarket markets
-  const markets = await api.polymarket.getTopMarkets({
+  const markets = await api.polymarket.getMarkets({
     limit: 50,
+    status: "active",
+    competitive: true,
   });
 
   return (
@@ -116,61 +109,6 @@ export default async function Home() {
               </Button>
             </Link>
           </div>
-
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
-            </p>
-
-            <div className="flex flex-col items-center justify-center gap-4">
-              <p className="text-center text-2xl text-white">
-                {session && <span>Logged in as {session.user?.name}</span>}
-              </p>
-              {session ? (
-                <form>
-                  <Button
-                    className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
-                    formAction={async () => {
-                      "use server";
-                      await auth.api.signOut({
-                        headers: await headers(),
-                      });
-                      redirect("/");
-                    }}
-                    size="lg"
-                    variant="outline"
-                  >
-                    Sign out
-                  </Button>
-                </form>
-              ) : (
-                <form>
-                  <Button
-                    className="border-white/20 bg-white/10 text-white hover:bg-white/20 hover:text-white"
-                    formAction={async () => {
-                      "use server";
-                      const res = await auth.api.signInSocial({
-                        body: {
-                          provider: "github",
-                          callbackURL: "/",
-                        },
-                      });
-                      if (!res.url) {
-                        throw new Error("No URL returned from signInSocial");
-                      }
-                      redirect(res.url);
-                    }}
-                    size="lg"
-                    variant="outline"
-                  >
-                    Sign in with Github
-                  </Button>
-                </form>
-              )}
-            </div>
-          </div>
-
-          {session?.user && <LatestPost />}
         </div>
       </main>
     </HydrateClient>

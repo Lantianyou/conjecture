@@ -6,24 +6,24 @@ import { Geist } from "next/font/google";
 import { TRPCReactProvider } from "@/trpc/react";
 
 export const metadata: Metadata = {
-	title: "Conjecture",
-	description: "Bloomberg for Polymarket",
-	icons: [{ rel: "icon", url: "/favicon.ico" }],
+  title: "Conjecture",
+  description: "Bloomberg for Polymarket",
+  icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
 const geist = Geist({
-	subsets: ["latin"],
-	variable: "--font-geist-sans",
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
 });
 
 export default function RootLayout({
-	children,
+  children,
 }: Readonly<{ children: React.ReactNode }>) {
-	return (
-		<html className={`${geist.variable}`} lang="en">
-			<body>
-				<TRPCReactProvider>{children}</TRPCReactProvider>
-			</body>
-		</html>
-	);
+  return (
+    <html className={`${geist.variable}`} lang="en">
+      <body>
+        <TRPCReactProvider>{children}</TRPCReactProvider>
+      </body>
+    </html>
+  );
 }
