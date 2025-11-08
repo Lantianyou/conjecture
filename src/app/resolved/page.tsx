@@ -12,10 +12,9 @@ import {
 import { api, HydrateClient } from "@/trpc/server";
 
 export default async function ResolvedMarketsPage() {
-  // Fetch resolved markets
   const markets = await api.polymarket.getMarkets({
     limit: 50,
-    status: "resolved",
+    closed: true,
   });
 
   return (

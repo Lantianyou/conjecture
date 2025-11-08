@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 
-const POLYMARKET_API_URL = "https://gamma-api.polymarket.com/markets";
+const POLYMARKET_API_URL = "https://gamma-api.polymarket.com";
 
 // Types for market detail response
 export type ImageOptimized = {
@@ -390,78 +390,142 @@ export type PolymarketMarketDetail = {
 export type PolymarketMarket = {
   id: string;
   question: string;
-  clobTokenIds: string; // JSON string containing array
-  volume: string; // API returns as string
-  volumeNum: number; // API returns as number
-  active: boolean;
-  closed: boolean;
+  conditionId: string;
+  slug: string;
+  twitterCardImage: string;
+  resolutionSource: string;
   endDate: string;
   category: string;
-  slug: string;
-  outcomePrices: string; // JSON string with ["yesPrice", "noPrice"]
+  ammType: string;
+  liquidity: string;
+  sponsorName: string;
+  sponsorImage: string;
+  startDate: string;
+  xAxisValue: string;
+  yAxisValue: string;
+  denominationToken: string;
+  fee: string;
+  image: string;
+  icon: string;
+  lowerBound: string;
+  upperBound: string;
+  description: string;
+  outcomes: string;
+  outcomePrices: string;
+  volume: string;
+  active: boolean;
   marketType: string;
-  image?: string;
-  description?: string;
-  conditionId?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  archived?: boolean;
-  restricted?: boolean;
-  liquidity?: string;
-  liquidityNum?: number;
-  endDateIso?: string;
-  outcomes?: string; // JSON string
-  twitterCardImage?: string;
-  icon?: string;
-  updatedBy?: number;
-  marketMakerAddress?: string;
-  closedTime?: string;
-  mailchimpTag?: string;
-  fpmmLive?: boolean;
-  ready?: boolean;
-  funded?: boolean;
-  cyom?: boolean;
-  creator?: string;
-  approved?: boolean;
-  pendingDeployment?: boolean;
-  deploying?: boolean;
-  events?: any[];
-  rewardsMinSize?: number;
-  rewardsMaxSpread?: number;
-  spread?: number;
-  oneDayPriceChange?: number;
-  oneHourPriceChange?: number;
-  oneWeekPriceChange?: number;
-  oneMonthPriceChange?: number;
-  oneYearPriceChange?: number;
-  lastTradePrice?: number;
-  bestBid?: number;
-  bestAsk?: number;
-  clearBookOnStart?: boolean;
-  manualActivation?: boolean;
-  negRiskOther?: boolean;
-  umaResolutionStatuses?: string;
-  rfqEnabled?: boolean;
-  holdingRewardsEnabled?: boolean;
-  feesEnabled?: boolean;
-  pagerDutyNotificationEnabled?: boolean;
-  competitive?: number;
-  volume24hr?: number;
-  volume1wk?: number;
-  volume1mo?: number;
-  volume1yr?: number;
-  volume1wkAmm?: number;
-  volume1moAmm?: number;
-  volume1yrAmm?: number;
-  volume1wkClob?: number;
-  volume1moClob?: number;
-  volume1yrClob?: number;
-  volume24hrNum?: number;
-  volume1wkNum?: number;
-  volume1moNum?: number;
-  volume1yrNum?: number;
-  hasReviewedDates?: boolean;
-  readyForCron?: boolean;
+  formatType: string;
+  lowerBoundDate: string;
+  upperBoundDate: string;
+  closed: boolean;
+  marketMakerAddress: string;
+  createdBy: number;
+  updatedBy: number;
+  createdAt: string;
+  updatedAt: string;
+  closedTime: string;
+  wideFormat: boolean;
+  new: boolean;
+  mailchimpTag: string;
+  featured: boolean;
+  archived: boolean;
+  resolvedBy: string;
+  restricted: boolean;
+  marketGroup: number;
+  groupItemTitle: string;
+  groupItemThreshold: string;
+  questionID: string;
+  umaEndDate: string;
+  enableOrderBook: boolean;
+  orderPriceMinTickSize: number;
+  orderMinSize: number;
+  umaResolutionStatus: string;
+  curationOrder: number;
+  volumeNum: number;
+  liquidityNum: number;
+  endDateIso: string;
+  startDateIso: string;
+  umaEndDateIso: string;
+  hasReviewedDates: boolean;
+  readyForCron: boolean;
+  commentsEnabled: boolean;
+  volume24hr: number;
+  volume1wk: number;
+  volume1mo: number;
+  volume1yr: number;
+  gameStartTime: string;
+  secondsDelay: number;
+  clobTokenIds: string;
+  disqusThread: string;
+  shortOutcomes: string;
+  teamAID: string;
+  teamBID: string;
+  umaBond: string;
+  umaReward: string;
+  fpmmLive: boolean;
+  volume24hrAmm: number;
+  volume1wkAmm: number;
+  volume1moAmm: number;
+  volume1yrAmm: number;
+  volume24hrClob: number;
+  volume1wkClob: number;
+  volume1moClob: number;
+  volume1yrClob: number;
+  volumeAmm: number;
+  volumeClob: number;
+  liquidityAmm: number;
+  liquidityClob: number;
+  makerBaseFee: number;
+  takerBaseFee: number;
+  customLiveness: number;
+  acceptingOrders: boolean;
+  notificationsEnabled: boolean;
+  score: number;
+  imageOptimized?: ImageOptimized;
+  iconOptimized?: ImageOptimized;
+  events: Event[];
+  categories: Category[];
+  tags: Tag[];
+  creator: string;
+  ready: boolean;
+  funded: boolean;
+  pastSlugs: string;
+  readyTimestamp: string;
+  fundedTimestamp: string;
+  acceptingOrdersTimestamp: string;
+  competitive: number;
+  rewardsMinSize: number;
+  rewardsMaxSpread: number;
+  spread: number;
+  automaticallyResolved: boolean;
+  oneDayPriceChange: number;
+  oneHourPriceChange: number;
+  oneWeekPriceChange: number;
+  oneMonthPriceChange: number;
+  oneYearPriceChange: number;
+  lastTradePrice: number;
+  bestBid: number;
+  bestAsk: number;
+  automaticallyActive: boolean;
+  clearBookOnStart: boolean;
+  chartColor: string;
+  seriesColor: string;
+  showGmpSeries: boolean;
+  showGmpOutcome: boolean;
+  manualActivation: boolean;
+  negRiskOther: boolean;
+  gameId: string;
+  groupItemRange: string;
+  sportsMarketType: string;
+  line: number;
+  umaResolutionStatuses: string;
+  pendingDeployment: boolean;
+  deploying: boolean;
+  deployingTimestamp: string;
+  scheduledDeploymentTimestamp: string;
+  rfqEnabled: boolean;
+  eventStartTime: string;
 };
 
 export const polymarketRouter = createTRPCRouter({
@@ -470,7 +534,7 @@ export const polymarketRouter = createTRPCRouter({
       z.object({
         limit: z.number().min(1).max(100).default(50),
         orderBy: z.enum(["volume", "created"]).default("volume"),
-        status: z.enum(["active", "resolved", "all"]).default("all"),
+        closed: z.boolean().optional().default(false),
         competitive: z.boolean().optional(),
       })
     )
@@ -483,19 +547,16 @@ export const polymarketRouter = createTRPCRouter({
         order,
       });
 
-      // Add closed filter if not 'all'
-      if (input.status === "active") {
-        params.append("closed", "false");
-      } else if (input.status === "resolved") {
-        params.append("closed", "true");
+      // Add closed filter if specified
+      if (typeof input.closed === "boolean") {
+        params.append("closed", String(input.closed));
       }
 
-      // Add competitive filter if provided
       if (input.competitive !== undefined) {
         params.append("competitive", input.competitive.toString());
       }
 
-      const url = `${POLYMARKET_API_URL}?${params.toString()}`;
+      const url = `${POLYMARKET_API_URL}/markets?${params.toString()}`;
 
       const response = await fetch(url, {
         headers: {
@@ -507,28 +568,19 @@ export const polymarketRouter = createTRPCRouter({
         throw new Error(`Failed to fetch markets: ${response.statusText}`);
       }
 
-      let data = (await response.json()) as PolymarketMarket[];
-
-      // Client-side filtering as fallback if API parameter doesn't work
-      if (input.status === "active") {
-        // Filter for markets that are NOT closed
-        data = data.filter((market) => !market.closed);
-      } else if (input.status === "resolved") {
-        // Filter for markets that ARE closed
-        data = data.filter((market) => market.closed);
-      }
+      const data = (await response.json()) as PolymarketMarket[];
 
       return data;
     }),
 
-  getMarketById: publicProcedure
+  getMarketBySlug: publicProcedure
     .input(
       z.object({
-        id: z.string(),
+        slug: z.string(),
       })
     )
     .query(async ({ input }) => {
-      const url = `${POLYMARKET_API_URL}/${input.id}`;
+      const url = `${POLYMARKET_API_URL}/markets/slug/${input.slug}`;
 
       const response = await fetch(url, {
         headers: {
