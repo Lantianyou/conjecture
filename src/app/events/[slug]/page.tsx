@@ -41,12 +41,10 @@ function PriceCard({
   label,
   price,
   change,
-  color,
 }: {
   label: string;
   price: string;
   change: number | undefined;
-  color: "emerald" | "rose";
 }) {
   const formatPriceChange = (changeValue: number | undefined) => {
     if (changeValue === undefined || changeValue === null) {
@@ -108,38 +106,8 @@ function RosePriceCard({ label, price }: { label: string; price: string }) {
   );
 }
 
-// Helper component for stat cards
-function StatCard({
-  label,
-  value,
-  color,
-}: {
-  label: string;
-  value: string;
-  color: "emerald" | "rose" | "blue" | "white";
-}) {
-  const colorClasses = {
-    emerald: "text-emerald-600",
-    rose: "text-rose-600",
-    blue: "text-blue-600",
-    white: "text-foreground",
-  };
-
-  return (
-    <div className="rounded-lg border p-4">
-      <div className="text-muted-foreground text-sm">{label}</div>
-      <div className={`mt-1 font-semibold text-2xl ${colorClasses[color]}`}>
-        {value}
-      </div>
-    </div>
-  );
-}
-
 function HeaderSection({ event }: { event: Event }) {
   const eventImage = event.imageOptimized?.imageUrlOptimized || event.image;
-  const eventIcon = event.iconOptimized?.imageUrlOptimized || event.icon;
-
-  // Get primary tag
   const primaryTag = event.tags.find((tag) => tag.forceShow) || event.tags[0];
 
   return (
@@ -164,19 +132,8 @@ function HeaderSection({ event }: { event: Event }) {
           {event.category && <Badge variant="outline">{event.category}</Badge>}
         </div>
 
-        {(eventImage || eventIcon) && (
+        {eventImage && (
           <div className="flex items-center gap-4">
-            {eventIcon && (
-              <div className="relative h-16 w-16 overflow-hidden rounded-lg border bg-muted/20">
-                <OptimizedImage
-                  alt="Event icon"
-                  className="h-full w-full object-cover"
-                  height={64}
-                  src={eventIcon}
-                  width={64}
-                />
-              </div>
-            )}
             {eventImage && (
               <div className="relative h-24 w-24 overflow-hidden rounded-lg border bg-muted/20">
                 <OptimizedImage
@@ -531,30 +488,62 @@ export default async function Page({
             {event.markets && event.markets.length > 0 && (
               <div className="grid gap-4 md:grid-cols-2">
                 {(() => {
-                  const firstMarket = event.markets[0];
-                  if (!firstMarket) return null;
+                  // Aggregate data from all markets
+                  const allActiveMarkets = event.markets.filter(
+                    (m) => m.active
+                  );
+                  if (allActiveMarkets.length === 0) {
+                    return null;
+                  }
 
-                  const outcomes = firstMarket.outcomes
+                  // Calculate average prices and price changes across all markets
+                  const totalYesPrices = allActiveMarkets.reduce(
+                    (sum, market) => {
+                      const prices = market.outcomePrices
+                        ? JSON.parse(market.outcomePrices)
+                        : [];
+                      return sum + (Number.parseFloat(prices[0] || "0") || 0);
+                    },
+                    0
+                  );
+
+                  const totalNoPrices = allActiveMarkets.reduce(
+                    (sum, market) => {
+                      const prices = market.outcomePrices
+                        ? JSON.parse(market.outcomePrices)
+                        : [];
+                      return sum + (Number.parseFloat(prices[1] || "0") || 0);
+                    },
+                    0
+                  );
+
+                  const avgYesPrice = totalYesPrices / allActiveMarkets.length;
+                  const avgNoPrice = totalNoPrices / allActiveMarkets.length;
+
+                  // Calculate average price change
+                  const totalPriceChanges = allActiveMarkets.reduce(
+                    (sum, market) => sum + (market.oneDayPriceChange || 0),
+                    0
+                  );
+                  const avgPriceChange =
+                    totalPriceChanges / allActiveMarkets.length;
+
+                  // Get the most common outcomes (assuming Yes/No)
+                  const firstMarket = allActiveMarkets[0];
+                  const outcomes = firstMarket?.outcomes
                     ? JSON.parse(firstMarket.outcomes)
                     : [];
-                  const outcomePrices = firstMarket.outcomePrices
-                    ? JSON.parse(firstMarket.outcomePrices)
-                    : ["0", "0"];
-
-                  const yesPrice = outcomePrices[0] || "0";
-                  const noPrice = outcomePrices[1] || "0";
 
                   return (
                     <>
                       <PriceCard
-                        change={firstMarket.oneDayPriceChange}
-                        color="emerald"
-                        label={`${outcomes[0] || "Yes"} Price`}
-                        price={yesPrice}
+                        change={avgPriceChange}
+                        label={`${outcomes[0] || "Yes"} Price (Avg)`}
+                        price={avgYesPrice.toString()}
                       />
                       <RosePriceCard
-                        label={`${outcomes[1] || "No"} Price`}
-                        price={noPrice}
+                        label={`${outcomes[1] || "No"} Price (Avg)`}
+                        price={avgNoPrice.toString()}
                       />
                     </>
                   );
