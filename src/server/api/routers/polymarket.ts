@@ -528,7 +528,301 @@ export type PolymarketMarket = {
   eventStartTime: string;
 };
 
+// Types for Events API
+export type EventsApiEventDetail = {
+  id: string;
+  ticker: string;
+  slug: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  resolutionSource: string;
+  startDate: string;
+  creationDate: string;
+  endDate: string;
+  image: string;
+  icon: string;
+  active: boolean;
+  closed: boolean;
+  archived: boolean;
+  new: boolean;
+  featured: boolean;
+  restricted: boolean;
+  liquidity: number;
+  volume: number;
+  openInterest: number;
+  sortBy: string;
+  category: string;
+  subcategory: string;
+  isTemplate: boolean;
+  templateVariables: string;
+  published_at: string;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: string;
+  updatedAt: string;
+  commentsEnabled: boolean;
+  competitive: number;
+  volume24hr: number;
+  volume1wk: number;
+  volume1mo: number;
+  volume1yr: number;
+  featuredImage: string;
+  disqusThread: string;
+  parentEvent: string;
+  enableOrderBook: boolean;
+  liquidityAmm: number;
+  liquidityClob: number;
+  negRisk: boolean;
+  negRiskMarketID: string;
+  negRiskFeeBips: number;
+  commentCount: number;
+  imageOptimized?: ImageOptimized;
+  iconOptimized?: ImageOptimized;
+  featuredImageOptimized?: ImageOptimized;
+  subEvents: string[];
+  markets: PolymarketMarket[];
+  series: Series[];
+  categories: Category[];
+  collections: Collection[];
+  tags: Tag[];
+  cyom: boolean;
+  closedTime: string;
+  showAllOutcomes: boolean;
+  showMarketImages: boolean;
+  automaticallyResolved: boolean;
+  enableNegRisk: boolean;
+  automaticallyActive: boolean;
+  eventDate: string;
+  startTime: string;
+  eventWeek: number;
+  seriesSlug: string;
+  score: string;
+  elapsed: string;
+  period: string;
+  live: boolean;
+  ended: boolean;
+  finishedTimestamp: string;
+  gmpChartMode: string;
+  eventCreators: EventCreator[];
+  tweetCount: number;
+  chats: Chat[];
+  featuredOrder: number;
+  estimateValue: boolean;
+  cantEstimate: boolean;
+  estimatedValue: string;
+  templates: Template[];
+  spreadsMainLine: number;
+  totalsMainLine: number;
+  carouselMap: string;
+  pendingDeployment: boolean;
+  deploying: boolean;
+  deployingTimestamp: string;
+  scheduledDeploymentTimestamp: string;
+  gameStatus: string;
+};
+
+export type EventsApiMarket = {
+  id: string;
+  question: string;
+  conditionId: string;
+  slug: string;
+  resolutionSource: string;
+  endDate: string;
+  startDate: string;
+  image: string;
+  icon: string;
+  description: string;
+  outcomes: string;
+  outcomePrices: string;
+  volume: string;
+  active: boolean;
+  closed: boolean;
+  marketMakerAddress: string;
+  createdAt: string;
+  updatedAt: string;
+  closedTime: string;
+  new: boolean;
+  featured: boolean;
+  submitted_by: string;
+  archived: boolean;
+  resolvedBy: string;
+  restricted: boolean;
+  groupItemTitle: string;
+  groupItemThreshold: string;
+  questionID: string;
+  umaEndDate: string;
+  enableOrderBook: boolean;
+  orderPriceMinTickSize: number;
+  orderMinSize: number;
+  umaResolutionStatus: string;
+  volumeNum: number;
+  liquidityNum: number;
+  endDateIso: string;
+  startDateIso: string;
+  hasReviewedDates: boolean;
+  volume1wk: number;
+  volume1mo: number;
+  volume1yr: number;
+  clobTokenIds: string;
+  umaBond: string;
+  umaReward: string;
+  volume1wkClob: number;
+  volume1moClob: number;
+  volume1yrClob: number;
+  volumeClob: number;
+  liquidityClob: number;
+  acceptingOrders: boolean;
+  negRisk: boolean;
+  negRiskMarketID: string;
+  negRiskRequestID: string;
+  ready: boolean;
+  funded: boolean;
+  acceptingOrdersTimestamp: string;
+  cyom: boolean;
+  competitive: number;
+  clobRewards?: Array<{
+    id: string;
+    conditionId: string;
+    assetAddress: string;
+    rewardsAmount: number;
+    rewardsDailyRate: number;
+    startDate: string;
+    endDate: string;
+  }>;
+  rewardsMinSize: number;
+  rewardsMaxSpread: number;
+  spread: number;
+  automaticallyResolved: boolean;
+  oneDayPriceChange: number;
+  oneWeekPriceChange: number;
+  oneMonthPriceChange: number;
+  lastTradePrice: number;
+  bestBid: number;
+  bestAsk: number;
+  automaticallyActive: boolean;
+  clearBookOnStart: boolean;
+  seriesColor: string;
+  showGmpSeries: boolean;
+  showGmpOutcome: boolean;
+  manualActivation: boolean;
+  negRiskOther: boolean;
+  umaResolutionStatuses: string;
+  pendingDeployment: boolean;
+  deploying: boolean;
+  rfqEnabled: boolean;
+  holdingRewardsEnabled: boolean;
+  feesEnabled: boolean;
+};
+
+export type EventsApiTag = {
+  id: string;
+  label: string;
+  slug: string;
+  forceShow: boolean;
+  publishedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  isCarousel?: boolean;
+};
+
+export type EventsApiEvent = {
+  id: string;
+  ticker: string;
+  slug: string;
+  title: string;
+  description: string;
+  resolutionSource: string;
+  startDate: string;
+  creationDate: string;
+  endDate: string;
+  image: string;
+  icon: string;
+  active: boolean;
+  closed: boolean;
+  archived: boolean;
+  new: boolean;
+  featured: boolean;
+  restricted: boolean;
+  liquidity: number;
+  volume: number;
+  openInterest: number;
+  createdAt: string;
+  updatedAt: string;
+  competitive: number;
+  volume24hr: number;
+  volume1wk: number;
+  volume1mo: number;
+  volume1yr: number;
+  enableOrderBook: boolean;
+  liquidityClob: number;
+  negRisk?: boolean;
+  negRiskMarketID?: string;
+  commentCount: number;
+  markets: EventsApiMarket[];
+  tags: EventsApiTag[];
+  cyom: boolean;
+  showAllOutcomes: boolean;
+  showMarketImages: boolean;
+  enableNegRisk: boolean;
+  automaticallyActive: boolean;
+  gmpChartMode?: string;
+  negRiskAugmented: boolean;
+  pendingDeployment: boolean;
+  deploying: boolean;
+};
+
 export const polymarketRouter = createTRPCRouter({
+  getEvents: publicProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).default(50),
+        closed: z.boolean().optional().default(false),
+      })
+    )
+    .query(async ({ input }) => {
+      const params = new URLSearchParams({
+        limit: input.limit.toString(),
+        closed: input.closed.toString(),
+        ascending: "false",
+      });
+      const url = `${POLYMARKET_API_URL}/events?${params.toString()}`;
+      const response = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch events: ${response.statusText}`);
+      }
+      const data = (await response.json()) as EventsApiEvent[];
+      return data;
+    }),
+
+  getEventBySlug: publicProcedure
+    .input(
+      z.object({
+        slug: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const url = `${POLYMARKET_API_URL}/events/slug/${input.slug}`;
+
+      const response = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch event: ${response.statusText}`);
+      }
+
+      const data = (await response.json()) as EventsApiEventDetail;
+
+      return data;
+    }),
+
   getMarkets: publicProcedure
     .input(
       z.object({

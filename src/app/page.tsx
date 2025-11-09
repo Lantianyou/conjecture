@@ -12,9 +12,10 @@ import {
 import { api, HydrateClient } from "@/trpc/server";
 
 export default async function Home() {
-  const markets = await api.polymarket.getMarkets({
+  const events = await api.polymarket.getEvents({
     limit: 50,
   });
+  console.log(events);
 
   return (
     <HydrateClient>
@@ -22,47 +23,54 @@ export default async function Home() {
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
           <div className="w-full">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {markets.map((market) => {
-                const outcomes = market.outcomes
-                  ? JSON.parse(market.outcomes)
+              {events.map((event) => {
+                // Get the first market from the event to display outcome prices
+                const firstMarket = event.markets[0];
+                const outcomes = firstMarket?.outcomes
+                  ? JSON.parse(firstMarket.outcomes)
                   : [];
-                const outcomePrices = market.outcomePrices
-                  ? JSON.parse(market.outcomePrices)
+                const outcomePrices = firstMarket?.outcomePrices
+                  ? JSON.parse(firstMarket.outcomePrices)
                   : [];
 
+                // Get primary category/tag
+                const primaryTag =
+                  event.tags.find((tag) => tag.forceShow) || event.tags[0];
+                const category = primaryTag?.label || "General";
+
                 return (
-                  <Link href={`/markets/${market.slug}`} key={market.id}>
+                  <Link href={`/events/${event.slug}`} key={event.id}>
                     <Card className="cursor-pointer transition-all duration-300 hover:shadow-lg">
                       <CardHeader className="pb-3">
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex min-w-0 flex-1 items-start gap-3">
-                            {market.icon && (
+                            {event.icon && (
                               <OptimizedImage
-                                alt={market.question}
+                                alt={event.title}
                                 className="h-10 w-10 shrink-0 rounded-md object-cover"
                                 height={40}
-                                src={market.icon}
+                                src={event.icon}
                                 width={40}
                               />
                             )}
                             <div className="min-w-0 flex-1">
                               <CardTitle className="line-clamp-2 font-medium text-base">
-                                {market.question}
+                                {event.title}
                               </CardTitle>
                               <CardDescription className="mt-1 text-xs">
-                                {market.category}
+                                {category}
                               </CardDescription>
                             </div>
                           </div>
                           <Badge
                             className={
-                              market.active
+                              event.active
                                 ? "bg-green-500 hover:bg-green-600"
                                 : ""
                             }
-                            variant={market.active ? "default" : "secondary"}
+                            variant={event.active ? "default" : "secondary"}
                           >
-                            {market.active ? "Active" : "Closed"}
+                            {event.active ? "Active" : "Closed"}
                           </Badge>
                         </div>
                       </CardHeader>
@@ -72,10 +80,9 @@ export default async function Home() {
                             Volume
                           </span>
                           <span className="font-semibold">
-                            ${(market.volumeNum / 1_000_000).toFixed(2)}M
+                            ${(event.volume / 1_000_000).toFixed(2)}M
                           </span>
                         </div>
-
                         {outcomes.map((outcome: string, index: number) => {
                           const price = outcomePrices[index] || "0";
                           const isEven = index % 2 === 0;
@@ -98,17 +105,6 @@ export default async function Home() {
                             </div>
                           );
                         })}
-
-                        {market.endDate && (
-                          <div className="flex items-center justify-between">
-                            <span className="text-muted-foreground text-sm">
-                              Ends
-                            </span>
-                            <span className="text-sm">
-                              {new Date(market.endDate).toLocaleDateString()}
-                            </span>
-                          </div>
-                        )}
                       </CardContent>
                     </Card>
                   </Link>
