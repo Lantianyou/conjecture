@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { OptimizedImage } from "@/components/optimized-image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +26,15 @@ import type { PolymarketMarketDetail } from "@/server/api/routers/polymarket";
 import { api, HydrateClient } from "@/trpc/server";
 
 type Market = PolymarketMarketDetail;
+
+// Currency formatter using Intl API
+const formatCurrency = (value: number, decimals = 3): string =>
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
 
 // Helper component for displaying a price with optional change indicator
 function PriceCard({
@@ -56,7 +66,7 @@ function PriceCard({
         </div>
         <div className="flex items-baseline gap-3">
           <div className="font-bold text-5xl text-emerald-400">
-            ${Number.parseFloat(price).toFixed(3)}
+            {formatCurrency(Number.parseFloat(price))}
           </div>
           {priceChange && (
             <div
@@ -89,7 +99,7 @@ function RosePriceCard({ label, price }: { label: string; price: string }) {
         </div>
         <div className="flex items-baseline gap-3">
           <div className="font-bold text-5xl text-rose-400">
-            ${Number.parseFloat(price).toFixed(3)}
+            {formatCurrency(Number.parseFloat(price))}
           </div>
         </div>
       </CardContent>
@@ -125,6 +135,9 @@ function StatCard({
 }
 
 function HeaderSection({ market }: { market: Market }) {
+  const marketImage = market.imageOptimized?.imageUrlOptimized || market.image;
+  const marketIcon = market.iconOptimized?.imageUrlOptimized || market.icon;
+
   return (
     <Card>
       <CardHeader className="space-y-4">
@@ -146,6 +159,34 @@ function HeaderSection({ market }: { market: Market }) {
           )}
           {market.ammType && <Badge variant="outline">{market.ammType}</Badge>}
         </div>
+
+        {(marketImage || marketIcon) && (
+          <div className="flex items-center gap-4">
+            {marketIcon && (
+              <div className="relative h-16 w-16 overflow-hidden rounded-lg border bg-muted/20">
+                <OptimizedImage
+                  alt="Market icon"
+                  className="h-full w-full object-cover"
+                  height={64}
+                  src={marketIcon}
+                  width={64}
+                />
+              </div>
+            )}
+            {marketImage && (
+              <div className="relative h-24 w-24 overflow-hidden rounded-lg border bg-muted/20">
+                <OptimizedImage
+                  alt="Market media"
+                  className="h-full w-full object-cover"
+                  height={96}
+                  src={marketImage}
+                  width={96}
+                />
+              </div>
+            )}
+          </div>
+        )}
+
         <div>
           <CardTitle className="font-bold text-4xl leading-tight">
             {market.question}
@@ -184,21 +225,21 @@ function TradingInfoSection({ market }: { market: Market }) {
             <StatCard
               color="emerald"
               label="Best Bid"
-              value={`$${market.bestBid.toFixed(3)}`}
+              value={formatCurrency(market.bestBid)}
             />
           )}
           {market.bestAsk !== undefined && (
             <StatCard
               color="rose"
               label="Best Ask"
-              value={`$${market.bestAsk.toFixed(3)}`}
+              value={formatCurrency(market.bestAsk)}
             />
           )}
           {market.spread !== undefined && (
             <StatCard
               color="blue"
               label="Spread"
-              value={`$${market.spread.toFixed(3)}`}
+              value={formatCurrency(market.spread)}
             />
           )}
         </div>
@@ -212,20 +253,40 @@ function VolumeLiquiditySection({
 }: {
   market: PolymarketMarketDetail;
 }) {
-  const formatCurrency = (value: number | undefined, decimals = 2) => {
+  const formatVolume = (value: number | undefined, decimals = 2) => {
     if (value === undefined || value === null) {
       return "N/A";
     }
     if (value >= 1_000_000_000) {
-      return `$${(value / 1_000_000_000).toFixed(decimals)}B`;
+      return `${new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      }).format(value / 1_000_000_000)}B`;
     }
     if (value >= 1_000_000) {
-      return `$${(value / 1_000_000).toFixed(decimals)}M`;
+      return `${new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      }).format(value / 1_000_000)}M`;
     }
     if (value >= 1000) {
-      return `$${(value / 1000).toFixed(decimals)}K`;
+      return `${new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      }).format(value / 1000)}K`;
     }
-    return `$${value.toFixed(decimals)}`;
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    }).format(value);
   };
 
   return (
@@ -241,14 +302,14 @@ function VolumeLiquiditySection({
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Total</span>
             <span className="font-semibold text-xl">
-              {formatCurrency(market.volumeNum)}
+              {formatVolume(market.volumeNum)}
             </span>
           </div>
           {market.volume24hr !== undefined && (
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">24h</span>
               <span className="font-medium">
-                {formatCurrency(market.volume24hr)}
+                {formatVolume(market.volume24hr)}
               </span>
             </div>
           )}
@@ -256,7 +317,7 @@ function VolumeLiquiditySection({
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">1 Week</span>
               <span className="font-medium">
-                {formatCurrency(market.volume1wk)}
+                {formatVolume(market.volume1wk)}
               </span>
             </div>
           )}
@@ -264,7 +325,7 @@ function VolumeLiquiditySection({
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">1 Month</span>
               <span className="font-medium">
-                {formatCurrency(market.volume1mo)}
+                {formatVolume(market.volume1mo)}
               </span>
             </div>
           )}
@@ -283,7 +344,7 @@ function VolumeLiquiditySection({
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Total</span>
               <span className="font-semibold text-xl">
-                {formatCurrency(market.liquidityNum)}
+                {formatVolume(market.liquidityNum)}
               </span>
             </div>
           )}
@@ -291,7 +352,7 @@ function VolumeLiquiditySection({
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">AMM</span>
               <span className="font-medium">
-                {formatCurrency(market.liquidityAmm)}
+                {formatVolume(market.liquidityAmm)}
               </span>
             </div>
           )}
@@ -299,7 +360,7 @@ function VolumeLiquiditySection({
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">CLOB</span>
               <span className="font-medium">
-                {formatCurrency(market.liquidityClob)}
+                {formatVolume(market.liquidityClob)}
               </span>
             </div>
           )}
@@ -500,6 +561,110 @@ function TechnicalInfoSection({ market }: { market: PolymarketMarketDetail }) {
   );
 }
 
+function RelatedEventsSection({ market }: { market: PolymarketMarketDetail }) {
+  if (!market.events || market.events.length === 0) {
+    return null;
+  }
+
+  const formatVolume = (value: number | undefined) => {
+    if (value === undefined || value === null) {
+      return "N/A";
+    }
+    if (value >= 1_000_000) {
+      return `$${(value / 1_000_000).toFixed(1)}M`;
+    }
+    if (value >= 1000) {
+      return `$${(value / 1000).toFixed(1)}K`;
+    }
+    return `$${value.toFixed(2)}`;
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-xl">
+          <Activity className="h-5 w-5" />
+          Related Events
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {market.events.map((event) => {
+            const eventImage =
+              event.imageOptimized?.imageUrlOptimized || event.image;
+            const eventIcon =
+              event.iconOptimized?.imageUrlOptimized || event.icon;
+
+            return (
+              <div
+                className="flex flex-col overflow-hidden rounded-lg border"
+                key={event.id}
+              >
+                {(eventImage || eventIcon) && (
+                  <div className="relative h-32 w-full bg-muted/20">
+                    {eventImage ? (
+                      <OptimizedImage
+                        alt="Event media"
+                        className="h-full w-full object-cover"
+                        height={128}
+                        src={eventImage}
+                        width={300}
+                      />
+                    ) : (
+                      eventIcon && (
+                        <div className="flex h-full w-full items-center justify-center bg-muted/30">
+                          <OptimizedImage
+                            alt="Event icon"
+                            className="h-12 w-12 object-cover"
+                            height={48}
+                            src={eventIcon}
+                            width={48}
+                          />
+                        </div>
+                      )
+                    )}
+                    {!event.active && (
+                      <Badge className="absolute top-2 right-2 bg-rose-500 hover:bg-rose-600">
+                        Closed
+                      </Badge>
+                    )}
+                  </div>
+                )}
+                <div className="flex flex-1 flex-col gap-2 p-4">
+                  <div>
+                    <h3 className="font-semibold leading-tight">
+                      {event.title}
+                    </h3>
+                    {event.subtitle && (
+                      <p className="mt-1 text-muted-foreground text-sm">
+                        {event.subtitle}
+                      </p>
+                    )}
+                  </div>
+                  <div className="mt-auto flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-1 text-muted-foreground">
+                      <DollarSign className="h-4 w-4" />
+                      <span>Volume: {formatVolume(event.volume)}</span>
+                    </div>
+                    {event.endDate && (
+                      <div className="flex items-center gap-1 text-muted-foreground">
+                        <Clock className="h-4 w-4" />
+                        <span className="truncate">
+                          {new Date(event.endDate).toLocaleDateString()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default async function Page({
   params,
 }: {
@@ -507,6 +672,7 @@ export default async function Page({
 }) {
   const { slug } = await params;
   const market = await api.polymarket.getMarketBySlug({ slug });
+  console.log("market", market);
 
   if (!market) {
     notFound();
@@ -556,6 +722,7 @@ export default async function Page({
             <PriceChangesSection market={market} />
             <MarketDetailsSection market={market} />
             <TechnicalInfoSection market={market} />
+            <RelatedEventsSection market={market} />
           </div>
         </div>
       </main>

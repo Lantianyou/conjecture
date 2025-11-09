@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { OptimizedImage } from "@/components/optimized-image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,27 +20,39 @@ export default async function Home() {
     <HydrateClient>
       <main className="flex min-h-screen flex-col items-center justify-center">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <div className="w-full max-w-6xl">
+          <div className="w-full">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {markets.map((market) => {
+                const outcomes = market.outcomes
+                  ? JSON.parse(market.outcomes)
+                  : [];
                 const outcomePrices = market.outcomePrices
                   ? JSON.parse(market.outcomePrices)
-                  : ["0", "0"];
-                const yesPrice = outcomePrices[0] || "0";
-                const noPrice = outcomePrices[1] || "0";
+                  : [];
 
                 return (
                   <Link href={`/markets/${market.slug}`} key={market.id}>
                     <Card className="cursor-pointer transition-all duration-300 hover:shadow-lg">
-                      <CardHeader>
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1">
-                            <CardTitle className="line-clamp-2 text-lg">
-                              {market.question}
-                            </CardTitle>
-                            <CardDescription className="mt-1">
-                              {market.category}
-                            </CardDescription>
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex min-w-0 flex-1 items-start gap-3">
+                            {market.icon && (
+                              <OptimizedImage
+                                alt={market.question}
+                                className="h-10 w-10 shrink-0 rounded-md object-cover"
+                                height={40}
+                                src={market.icon}
+                                width={40}
+                              />
+                            )}
+                            <div className="min-w-0 flex-1">
+                              <CardTitle className="line-clamp-2 font-medium text-base">
+                                {market.question}
+                              </CardTitle>
+                              <CardDescription className="mt-1 text-xs">
+                                {market.category}
+                              </CardDescription>
+                            </div>
                           </div>
                           <Badge
                             className={
@@ -63,23 +76,28 @@ export default async function Home() {
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground text-sm">
-                            Yes Price
-                          </span>
-                          <span className="font-semibold text-emerald-600">
-                            ${Number.parseFloat(yesPrice).toFixed(2)}
-                          </span>
-                        </div>
+                        {outcomes.map((outcome: string, index: number) => {
+                          const price = outcomePrices[index] || "0";
+                          const isEven = index % 2 === 0;
 
-                        <div className="flex items-center justify-between">
-                          <span className="text-muted-foreground text-sm">
-                            No Price
-                          </span>
-                          <span className="font-semibold text-rose-600">
-                            ${Number.parseFloat(noPrice).toFixed(2)}
-                          </span>
-                        </div>
+                          return (
+                            <div
+                              className="flex items-center justify-between"
+                              key={outcome}
+                            >
+                              <span className="text-muted-foreground text-sm">
+                                {outcome} Price
+                              </span>
+                              <span
+                                className={`font-semibold ${
+                                  isEven ? "text-emerald-600" : "text-rose-600"
+                                }`}
+                              >
+                                ${Number.parseFloat(price).toFixed(2)}
+                              </span>
+                            </div>
+                          );
+                        })}
 
                         {market.endDate && (
                           <div className="flex items-center justify-between">

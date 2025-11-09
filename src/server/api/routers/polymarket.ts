@@ -533,18 +533,18 @@ export const polymarketRouter = createTRPCRouter({
     .input(
       z.object({
         limit: z.number().min(1).max(100).default(50),
-        orderBy: z.enum(["volume", "created"]).default("volume"),
         closed: z.boolean().optional().default(false),
         competitive: z.boolean().optional(),
       })
     )
     .query(async ({ input }) => {
-      const order = input.orderBy === "volume" ? "-volumeNum" : "-createdAt";
+      const order = "volume1wk";
 
       // Build URL with filters - use 'closed' parameter for server-side filtering when possible
       const params = new URLSearchParams({
         limit: input.limit.toString(),
         order,
+        ascending: "false",
       });
 
       // Add closed filter if specified
