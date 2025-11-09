@@ -1,1 +1,1 @@
-# Conjecture: bloomberg for polymarket
+# Conjecture: best effort prediction
